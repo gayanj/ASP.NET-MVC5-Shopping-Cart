@@ -79,6 +79,7 @@ namespace ShoppingCart.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    MigrateShoppingCart(model.Email);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -151,10 +152,18 @@ namespace ShoppingCart.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Name = model.Name,
+                    Address = model.Address,
+                    Phone = model.Phone
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    MigrateShoppingCart(model.Email);
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
@@ -481,5 +490,14 @@ namespace ShoppingCart.Controllers
             }
         }
         #endregion
+
+        private void MigrateShoppingCart(string userName)
+        {
+            // Associate shopping cart items with logged-in user
+            var cart = Models.ShoppingCart.GetCart(this.HttpContext);
+
+            cart.MigrateCart(userName);
+            Session[Models.ShoppingCart.CartSessionKey] = userName;
+        }
     }
 }

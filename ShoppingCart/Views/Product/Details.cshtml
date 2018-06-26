@@ -1,0 +1,37 @@
+﻿@model ShoppingCart.Models.Product
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Product Details</h2>
+<table>
+    <tr>
+        <th>
+            @Model.Name
+        </th>
+    </tr>
+    <tr>
+        <td>@Model.Description</td>
+    </tr>
+    <tr>
+        <td>@Model.Catergory</td>
+    </tr>
+    <tr>
+        <td>@Model.Price</td>
+    </tr>
+    <tr>
+        @if (@Model.IsOrderable)
+        {
+            <td>
+                @Html.ActionLink("Add to cart", "AddToCart", "ShoppingCart", new {id = @Model.ProductId}, new {@class = "btn btn-primary"})
+            </td>
+        }
+        else
+        {
+            <td>
+                <button class="btn btn-primary disabled">Out of Stock</button>
+            </td>
+        }
+    </tr>
+</table>

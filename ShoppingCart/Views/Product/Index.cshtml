@@ -1,0 +1,55 @@
+﻿@model IList<ShoppingCart.Models.Product>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Products</h2>
+<table>
+    <tr>
+        <th>
+            Product Name
+        </th>
+        <th>
+            Description
+        </th>
+        <th>
+            Catergory
+        </th>
+        <th>
+            Price
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in
+        Model)
+    {
+        <tr id="row-@item.ProductId">
+            <td>
+                @Html.ActionLink(item.Name,
+                    "Details", "Product", new {id = item.ProductId}, null)
+            </td>
+            <td>
+                @item.Description
+            </td>
+            <td>
+                @item.Catergory
+            </td>
+            <td>
+                @item.Price
+            </td>
+            @if (item.IsOrderable)
+            {
+                <td>
+                    @Html.ActionLink("Add to cart", "AddToCart", "ShoppingCart", new {id = item.ProductId}, new {@class = "btn btn-primary"})
+                </td>
+            }
+            else
+            {
+                <td>
+                    <button class="btn btn-primary disabled">Out of Stock</button>
+                </td>
+            }
+        </tr>
+    }
+</table>
